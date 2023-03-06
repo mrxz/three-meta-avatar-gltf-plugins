@@ -1,0 +1,13 @@
+{
+  "name": "meta-avatars",
+  "packageManager": "yarn@3.2.0",
+  "scripts": {
+    "start": "live-server --port=4000 --no-browser ."
+  },
+  "dependencies": {
+    "three": "^0.150.1"
+  },
+  "devDependencies": {
+    "@compodoc/live-server": "^1.2.3"
+  }
+}
