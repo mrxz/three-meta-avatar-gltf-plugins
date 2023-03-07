@@ -2,7 +2,7 @@
 [![npm version](https://img.shields.io/npm/v/@fern-solutions/three-meta-avatar-gltf-plugins.svg?style=flat-square)](https://www.npmjs.com/package/@fern-solutions/three-meta-avatar-gltf-plugins)
 [![npm version](https://img.shields.io/npm/l/@fern-solutions/three-meta-avatar-gltf-plugins.svg?style=flat-square)](https://www.npmjs.com/package/@fern-solutions/three-meta-avatar-gltf-plugins)
 [![github](https://flat.badgen.net/badge/icon/github?icon=github&label)](https://github.com/mrxz/three-meta-avatar-gltf-plugins/)
-[![twitter](https://flat.badgen.net/twitter/follow/noerihuisman)](https://twitter.com/noerihuisman)
+[![twitter](https://flat.badgen.net/badge/twitter/@noerihuisman/blue?icon=twitter&label)](https://twitter.com/noerihuisman)
 [![ko-fi](https://img.shields.io/badge/ko--fi-buy%20me%20a%20coffee-ff5f5f?style=flat-square)](https://ko-fi.com/fernsolutions)
 
 **This project is in an experimental state**
@@ -24,3 +24,4 @@ For example: `S0_L0_M0_V1_optimized_geom` will be the highest detail (`L0`), ful
  * Meta Avatars appear to have two color vertex attributes, neither seem to provide correct output when taken as-is, so vertex colors are disabled.
  * The normals and tangents aren't dequantized yet.
  * It assumes that the KTX2 texture is of a specific format and that the browser supports this natively (no transcoding is done)
+ * Textures for avatars intended for the Rift can't be loaded

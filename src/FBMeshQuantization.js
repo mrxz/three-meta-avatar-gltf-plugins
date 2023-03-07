@@ -31,8 +31,10 @@ export class FBMeshQuantization {
                 this._dequantizeMeshPosition(childGeometry.getAttribute('position'), quantizationProperties));
 
             // Dequantize any morph targets
-            childGeometry.morphAttributes.position = childGeometry.morphAttributes.position.map(attribute =>
-                this._dequantizeMorphTargetPosition( attribute, quantizationProperties ));
+            if('position' in childGeometry.morphAttributes) {
+                childGeometry.morphAttributes.position = childGeometry.morphAttributes.position.map(attribute =>
+                    this._dequantizeMorphTargetPosition( attribute, quantizationProperties ));
+            }
         }
 
     }

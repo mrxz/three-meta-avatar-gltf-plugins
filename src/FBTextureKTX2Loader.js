@@ -53,6 +53,7 @@ export class FBTextureKTX2Loader extends Loader {
 
         if ( !FBTextureKTX2Loader.FORMAT_MAP[container.vkFormat] ) {
 
+            console.error( 'FBTextureKTX2Loader: Unsupported vkFormat: ' + container.vkFormat );
             throw new Error( 'FBTextureKTX2Loader: Unsupported vkFormat: ' + container.vkFormat );
 
         }
@@ -85,6 +86,7 @@ export class FBTextureKTX2Loader extends Loader {
 
             } else {
 
+                console.error( 'FBTextureKTX2Loader: Unsupported supercompressionScheme.' );
                 throw new Error( 'FBTextureKTX2Loader: Unsupported supercompressionScheme.' );
 
             }

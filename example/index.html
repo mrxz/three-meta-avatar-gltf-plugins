@@ -136,18 +136,25 @@
                         avatarNode.add(rootJoint);
 
                         // Pick out a single child to use
-                        const child = gltf.scene.children[0].children.filter(x => x.name === 'S0_L0_M0_V1_optimized_geom')[0];
+                        console.log(gltf.scene.children[0].children.map(x=>x.name));
+                        let child = gltf.scene.children[0].children.filter(x => x.name === 'S0_L0_M0_V1_optimized_geom')[0];
+                        if(!child) {
+                            // It seems that the highest lod level isn't present, attempt lowest one (might be a fastload avatar)
+                            child = gltf.scene.children[0].children.filter(x => x.name === 'S0_L4_M0_V1_optimized_geom')[0];
+                        }
                         avatarNode.add(child);
 
                         // Add a GUI to change the morph targets
                         const gui = new GUI();
-                        const influences = child.morphTargetInfluences;
-                        for ( const [ key, value ] of Object.entries( child.morphTargetDictionary ) ) {
+                        if(child.morphTargetDictionary) {
+                            const influences = child.morphTargetInfluences;
+                            for ( const [ key, value ] of Object.entries( child.morphTargetDictionary ) ) {
 
-                            gui.add( influences, value, 0, 1, 0.01 )
-                                .name( key )
-                                .listen( influences );
+                                gui.add( influences, value, 0, 1, 0.01 )
+                                    .name( key )
+                                    .listen( influences );
 
+                            }
                         }
                     },
                     function(xhr) {},

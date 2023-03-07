@@ -23,7 +23,8 @@ export class FBAvatarTweaks {
 
             }
 
-            // Disable vertex colors as they seem incorrect (?)
+            // Disable vertex colors as they seem to only be for when the texture hasn't loaded yet
+            // Fastload avatars don't seem to have any texture, so would require vertex colors
             child.material.vertexColors = false;
 
         });
