@@ -24,7 +24,6 @@ export class FBTextureKTX2 {
         }
 
         const extension = textureDef.extensions[ this.name ];
-        const loader = parser.options.ktx2Loader;
 
         if ( ! this.loader ) {
 

@@ -23,3 +23,4 @@ For example: `S0_L0_M0_V1_optimized_geom` will be the highest detail (`L0`), ful
 ## Limitations
  * Meta Avatars appear to have two color vertex attributes, neither seem to provide correct output when taken as-is, so vertex colors are disabled.
  * The normals and tangents aren't dequantized yet.
+ * It assumes that the KTX2 texture is of a specific format and that the browser supports this natively (no transcoding is done)

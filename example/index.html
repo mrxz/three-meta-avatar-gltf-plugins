@@ -4,7 +4,22 @@
         <meta charset="utf-8">
         <title>Three.js - Meta Avatars</title>
         <style>
-            body { margin: 0; }
+            body { margin: 0; min-width: 100vw; min-height: 100vh; text-align: center;}
+            #container {
+                position: absolute;
+                width: 100%;
+                margin-top: 5em;
+                text-align: center;
+            }
+            #notice {
+                margin: 0 auto;
+                padding: 1em;
+                width: 500px;
+                border: 2px dashed lightgray;
+                border-radius: 10px;
+                color: lightgray;
+                display: inline-block;
+            }
         </style>
         <script type="importmap">
             {
@@ -21,7 +36,7 @@
             import * as THREE from 'three';
             import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
             import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-            import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
+            import { ZSTDDecoder } from 'three/addons/libs/zstddec.module.js';
             import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
             import { FBAvatarTweaks, FBMeshQuantization, FBTextureKTX2 } from 'three-meta-avatar-gltf-plugins';
@@ -41,6 +56,44 @@
             }
             window.addEventListener('resize', onWindowResize);
             onWindowResize();
+
+            // Drag and drop handler
+            window.addEventListener('dragover', function(event) {
+                event.preventDefault();
+            });
+
+            let zstdDecoder = null;
+            window.addEventListener('drop', async function(event) {
+                event.preventDefault();
+
+                const files = event.dataTransfer.files;
+                if(!files || !files[0]) {
+                    return;
+                }
+
+                // Hide message
+                document.getElementById('notice').style.display = 'none';
+
+                const blob = new Blob([files[0]], { type: "application/octet-stream" });
+                const arrayBuffer = await blob.arrayBuffer();
+
+                // Check if the array buffer is compressed
+                const magicNumber = new Uint8Array(arrayBuffer.slice(0, 4));
+                if(magicNumber[0] == 0x28 && magicNumber[1] == 0xb5 && magicNumber[2] == 0x2f && magicNumber[3] == 0xfd) {
+                    if(!zstdDecoder) {
+                        zstdDecoder = new ZSTDDecoder()
+                        await zstdDecoder.init();
+                    }
+
+                    const decoded = zstdDecoder.decode(new Uint8Array(arrayBuffer));
+                    const url = URL.createObjectURL(new Blob([decoded]));
+                    load(url);
+                } else {
+                    // Normal glb file
+                    const url = URL.createObjectURL(blob);
+                    load(url);
+                }
+            });
 
             // Grid helper
             const gridHelper = new THREE.GridHelper( 10, 10 );
@@ -68,31 +121,33 @@
             gltfLoader.register((_) => new FBMeshQuantization());
             gltfLoader.register((parser) => new FBTextureKTX2(parser));
 
-            gltfLoader.load('/assets/2_quest.glb',
-                function(gltf) {
-                    // Needed since all meshes are skinned
-                    const rootJoint = gltf.scene.children[0].children.filter(x => x.name === 'Root_jnt')[0];
-                    scene.add(rootJoint);
+            function load(url) {
+                gltfLoader.load(url,
+                    function(gltf) {
+                        // Needed since all meshes are skinned
+                        const rootJoint = gltf.scene.children[0].children.filter(x => x.name === 'Root_jnt')[0];
+                        scene.add(rootJoint);
 
-                    // Pick out a single child to use
-                    const child = gltf.scene.children[0].children.filter(x => x.name === 'S0_L0_M0_V1_optimized_geom')[0];
-                    scene.add(child);
+                        // Pick out a single child to use
+                        const child = gltf.scene.children[0].children.filter(x => x.name === 'S0_L0_M0_V1_optimized_geom')[0];
+                        scene.add(child);
 
-                    // Add a GUI to change the morph targets
-                    const gui = new GUI();
-                    const influences = child.morphTargetInfluences;
-                    for ( const [ key, value ] of Object.entries( child.morphTargetDictionary ) ) {
+                        // Add a GUI to change the morph targets
+                        const gui = new GUI();
+                        const influences = child.morphTargetInfluences;
+                        for ( const [ key, value ] of Object.entries( child.morphTargetDictionary ) ) {
 
-                        gui.add( influences, value, 0, 1, 0.01 )
-                            .name( key )
-                            .listen( influences );
+                            gui.add( influences, value, 0, 1, 0.01 )
+                                .name( key )
+                                .listen( influences );
 
-                    }
-                },
-                function(xhr) {},
-                function(error) {
-                    console.error(error);
-                });
+                        }
+                    },
+                    function(xhr) {},
+                    function(error) {
+                        console.error(error);
+                    });
+            }
 
             function animate() {
                 requestAnimationFrame( animate );
@@ -100,5 +155,11 @@
             }
             animate();
         </script>
+
+        <div id="container">
+            <div id="notice">
+                <h1>Drag and drop an avatar .glb file (compressed or uncompressed)</h1>
+            </div>
+        </div>
     </body>
 </html>
