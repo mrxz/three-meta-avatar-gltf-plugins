@@ -115,6 +115,10 @@
             dirLight.position.set( 1, 4, 1 );
             scene.add(dirLight);
 
+            // Container for the avatar
+            const avatarNode = new THREE.Object3D();
+            scene.add(avatarNode);
+
             // Load avatar
             const gltfLoader = new GLTFLoader();
             gltfLoader.register((_) => new FBAvatarTweaks());
@@ -124,13 +128,16 @@
             function load(url) {
                 gltfLoader.load(url,
                     function(gltf) {
+                        // Remove any previously loaded avatar
+                        avatarNode.clear();
+
                         // Needed since all meshes are skinned
                         const rootJoint = gltf.scene.children[0].children.filter(x => x.name === 'Root_jnt')[0];
-                        scene.add(rootJoint);
+                        avatarNode.add(rootJoint);
 
                         // Pick out a single child to use
                         const child = gltf.scene.children[0].children.filter(x => x.name === 'S0_L0_M0_V1_optimized_geom')[0];
-                        scene.add(child);
+                        avatarNode.add(child);
 
                         // Add a GUI to change the morph targets
                         const gui = new GUI();
