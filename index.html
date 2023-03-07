@@ -1,20 +1,39 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>My first three.js app</title>
-		<style>
-			body { margin: 0; }
-		</style>
-	</head>
-	<body>
-		<script type="module">
-			import * as THREE from './node_modules/three/build/three.module.js';
+    <head>
+        <meta charset="utf-8">
+        <title>Three.js - Meta Avatars</title>
+        <style>
+            body { margin: 0; }
+        </style>
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "./node_modules/three/build/three.module.js",
+                    "three/addons/": "./node_modules/three/examples/jsm/"
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <script type="module">
+            import * as THREE from 'three';
+            import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+            import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+            import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
+            import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+
+            import { FBAvatarTweaks } from '/js/FBAvatarTweaks.js';
+            import { FBMeshQuantization } from '/js/FBMeshQuantization.js';
+            import { FBTextureKTX2 } from '/js/FBTextureKTX2.js';
 
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
             const renderer = new THREE.WebGLRenderer();
+            renderer.outputEncoding = THREE.sRGBEncoding;
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.setPixelRatio(1.0);
             document.body.appendChild( renderer.domElement );
             function onWindowResize() {
                 camera.aspect = window.innerWidth / window.innerHeight;
@@ -24,18 +43,62 @@
             window.addEventListener('resize', onWindowResize);
             onWindowResize();
 
-            const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-            const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-            const cube = new THREE.Mesh( geometry, material );
-            scene.add( cube );
+            // Grid helper
+            const gridHelper = new THREE.GridHelper( 10, 10 );
+            scene.add( gridHelper );
 
-            camera.position.z = 5;
+            // Orbit controls
+            camera.position.z = 2;
+            camera.position.y = 1.5;
+            const controls = new OrbitControls(camera, renderer.domElement);
+            controls.target.set(0, 1.5, 0);
+            controls.update();
+
+            // Light
+            const color = 0xFFFFFF;
+            const light = new THREE.AmbientLight(color, 1);
+            scene.add(light);
+
+            const dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
+            dirLight.position.set( 1, 4, 1 );
+            scene.add(dirLight);
+
+            // Load avatar
+            const gltfLoader = new GLTFLoader();
+            gltfLoader.register((_) => new FBAvatarTweaks());
+            gltfLoader.register((_) => new FBMeshQuantization());
+            gltfLoader.register((parser) => new FBTextureKTX2(parser));
+
+            gltfLoader.load('/assets/2_quest.glb',
+                function(gltf) {
+                    const rootJoint = gltf.scene.children[0].children.filter(x => x.name === 'Root_jnt')[0];
+                    scene.add(rootJoint);
+                    console.log(rootJoint);
+
+                    const child = gltf.scene.children[0].children.filter(x => x.name === 'S0_L0_M0_V1_optimized_geom')[0];
+                    scene.add(child);
+
+                    // Add a GUI to change the morph targets
+                    const gui = new GUI();
+                    const influences = child.morphTargetInfluences;
+                    for ( const [ key, value ] of Object.entries( child.morphTargetDictionary ) ) {
+
+                        gui.add( influences, value, 0, 1, 0.01 )
+                            .name( key )
+                            .listen( influences );
+
+                    }
+                },
+                function(xhr) {},
+                function(error) {
+                    console.error(error);
+                });
 
             function animate() {
                 requestAnimationFrame( animate );
                 renderer.render( scene, camera );
             }
             animate();
-		</script>
-	</body>
+        </script>
+    </body>
 </html>
