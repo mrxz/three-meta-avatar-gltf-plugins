@@ -9,8 +9,9 @@
         <script type="importmap">
             {
                 "imports": {
-                    "three": "./node_modules/three/build/three.module.js",
-                    "three/addons/": "./node_modules/three/examples/jsm/"
+                    "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+                    "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/",
+                    "three-meta-avatar-gltf-plugins": "./js/three-meta-avatar-gltf-plugins.esm.min.js"
                 }
             }
         </script>
@@ -23,9 +24,7 @@
             import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
             import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
-            import { FBAvatarTweaks } from '/js/FBAvatarTweaks.js';
-            import { FBMeshQuantization } from '/js/FBMeshQuantization.js';
-            import { FBTextureKTX2 } from '/js/FBTextureKTX2.js';
+            import { FBAvatarTweaks, FBMeshQuantization, FBTextureKTX2 } from 'three-meta-avatar-gltf-plugins';
 
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );

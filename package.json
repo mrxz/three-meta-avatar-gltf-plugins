@@ -1,13 +1,38 @@
 {
-  "name": "meta-avatars",
+  "name": "@fern-solutions/three-meta-avatar-gltf-plugins",
+  "version": "0.1.0",
+  "description": "GLTFLoader plugins for loading Meta Avatars in Three.js projects",
+  "module": "dist/three-meta-avatar-gltf-plugins.esm.min.js",
+  "browser": "dist/three-meta-avatar-gltf-plugins.umd.min.js",
+  "main": "dist/three-meta-avatar-gltf-plugins.esm.min.js",
+  "author": "Noeri Huisman",
+  "license": "MIT",
   "packageManager": "yarn@3.2.0",
   "scripts": {
-    "start": "live-server --port=4000 --no-browser ."
+    "dev": "concurrently \"rollup -c -w\" \"live-server --port=4000 --no-browser ./example --mount=/js:./dist\"",
+    "build": "rollup -c",
+    "watch": "rollup -c -w"
   },
-  "dependencies": {
-    "three": "^0.150.1"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrxz/three-meta-avatar-gltf-plugins"
   },
+  "bugs": {
+    "url": "https://github.com/mrxz/three-meta-avatar-gltf-plugins/issues"
+  },
+  "homepage": "https://github.com/mrxz/three-meta-avatar-gltf-plugins",
+  "keywords": [
+    "three",
+    "gltf"
+  ],
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
-    "@compodoc/live-server": "^1.2.3"
+    "@compodoc/live-server": "1.2.3",
+    "concurrently": "^7.1.0",
+    "rollup": "^2.71.1",
+    "rollup-plugin-terser": "^7.0.2",
+    "three": "^0.150.1"
   }
 }

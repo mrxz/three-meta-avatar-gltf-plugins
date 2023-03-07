@@ -1,8 +1,5 @@
 import {
     CompressedTexture,
-    CompressedArrayTexture,
-    Data3DTexture,
-    DataTexture,
     FileLoader,
     LinearFilter,
     LinearMipmapLinearFilter,
@@ -48,7 +45,7 @@ export class FBTextureKTX2Loader extends Loader {
     /**
      * @param {ArrayBuffer} buffer
      * @param {object?} config
-     * @return {Promise<CompressedTexture|CompressedArrayTexture|DataTexture|Data3DTexture>}
+     * @return {Promise<CompressedTexture>}
      */
     async _createTexture( buffer, config = {} ) {
 

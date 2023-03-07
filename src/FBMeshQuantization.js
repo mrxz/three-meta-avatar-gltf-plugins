@@ -48,9 +48,6 @@ export class FBMeshQuantization {
         const vec3 = new THREE.Vector3();
         for(let i = 0; i < attribute.count; i++) {
             vec3.fromBufferAttribute(attribute, i);
-            if(i === 0) {
-                console.log(vec3);
-            }
             newAttribute.setXYZ(i,
                 min.x+((vec3.x+1.0)*dimensions.x*.5),
                 min.y+((vec3.y+1.0)*dimensions.y*.5),
