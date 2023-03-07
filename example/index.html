@@ -70,10 +70,11 @@
 
             gltfLoader.load('/assets/2_quest.glb',
                 function(gltf) {
+                    // Needed since all meshes are skinned
                     const rootJoint = gltf.scene.children[0].children.filter(x => x.name === 'Root_jnt')[0];
                     scene.add(rootJoint);
-                    console.log(rootJoint);
 
+                    // Pick out a single child to use
                     const child = gltf.scene.children[0].children.filter(x => x.name === 'S0_L0_M0_V1_optimized_geom')[0];
                     scene.add(child);
 

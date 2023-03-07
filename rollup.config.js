@@ -20,5 +20,5 @@ export default {
             format: 'es',
         },
     ],
-    external: ['three'],
+    external: ['three', 'three/addons/libs/ktx-parse.module.js', 'three/addons/libs/zstddec.module.js'],
 };
