@@ -20,6 +20,13 @@ The avatar .glb files contain multiple versions all with names matching `S0_L[0-
 
 For example: `S0_L0_M0_V1_optimized_geom` will be the highest detail (`L0`), full body (`M0`), with head (`V1`).
 
+## Sourcing avatar files
+The [Meta Avatars SDK](https://developer.oculus.com/downloads/package/meta-avatars-sdk/) comes bundled with 32 sample avatars that can be used. If you'd rather want to use your own avatar, connect your Quest 2 and search for a `.glb` file in either one of these directories:
+* `Quest 2/Internal shared storage/Android/data/com.oculus.shellenv/files/Oculus/Avatars2/`
+* `Quest 2/Internal shared storage/Android/data/com.oculus.avatar2/cache/Oculus/Avatars2/`
+
+There might be multiple files which are either older versions of your avatar or cached avatars of others. When in doubt simply make a small tweak to your avatar and save it. This should result in a new file that's easy to filter out based on the modified date.
+
 ## Limitations
  * Meta Avatars appear to have two color vertex attributes, neither seem to provide correct output when taken as-is, so vertex colors are disabled.
  * The normals and tangents aren't dequantized yet.
