@@ -9,7 +9,7 @@
   "license": "MIT",
   "packageManager": "yarn@3.2.0",
   "scripts": {
-    "dev": "concurrently \"rollup -c -w\" \"live-server --port=4000 --no-browser ./example --mount=/js:./dist\"",
+    "dev": "concurrently \"rollup -c -w\" \"live-server --port=4000 --no-browser ./example --mount=/js:./dist --mount=/libs:./node_modules\"",
     "build": "rollup -c",
     "watch": "rollup -c -w"
   },
