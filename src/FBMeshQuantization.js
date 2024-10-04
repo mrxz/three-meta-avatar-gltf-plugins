@@ -19,23 +19,26 @@ export class FBMeshQuantization {
         }
 
 
-        // Iterate over the children
-        for ( let child of gltf.scene.children[0].children ) {
+        // Traverse children
+        gltf.scene.traverse(child => {
 
             if(!child.isMesh) {
-                continue;
+                return;
             }
 
             const childGeometry = child.geometry;
             childGeometry.setAttribute('position',
                 this._dequantizeMeshPosition(childGeometry.getAttribute('position'), quantizationProperties));
+            childGeometry.setAttribute('normal',
+                this._dequantizeMeshNormal(childGeometry.getAttribute('normal'), quantizationProperties));
 
             // Dequantize any morph targets
             if('position' in childGeometry.morphAttributes) {
                 childGeometry.morphAttributes.position = childGeometry.morphAttributes.position.map(attribute =>
                     this._dequantizeMorphTargetPosition( attribute, quantizationProperties ));
             }
-        }
+
+        });
 
     }
 
@@ -43,6 +46,27 @@ export class FBMeshQuantization {
 
         const min = new THREE.Vector3(...quantizationProperties['quantize_mesh_min_POSITION']);
         const max = new THREE.Vector3(...quantizationProperties['quantize_mesh_max_POSITION']);
+        const dimensions = new THREE.Vector3().copy(max).sub(min);
+
+        const newAttribute = new THREE.BufferAttribute(new Float32Array(attribute.count * 3), 3, false);
+
+        const vec3 = new THREE.Vector3();
+        for(let i = 0; i < attribute.count; i++) {
+            vec3.fromBufferAttribute(attribute, i);
+            newAttribute.setXYZ(i,
+                min.x+((vec3.x+1.0)*dimensions.x*.5),
+                min.y+((vec3.y+1.0)*dimensions.y*.5),
+                min.z+((vec3.z+1.0)*dimensions.z*.5));
+        }
+
+        return newAttribute;
+
+    }
+
+    _dequantizeMeshNormal( attribute, quantizationProperties ) {
+
+        const min = new THREE.Vector3(...quantizationProperties['quantize_min_NORMAL']);
+        const max = new THREE.Vector3(...quantizationProperties['quantize_max_NORMAL']);
         const dimensions = new THREE.Vector3().copy(max).sub(min);
 
         const newAttribute = new THREE.BufferAttribute(new Float32Array(attribute.count * 3), 3, false);

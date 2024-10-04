@@ -131,13 +131,16 @@
                         // Remove any previously loaded avatar
                         avatarNode.clear();
 
+                        // Determine if it's an older (pre Connect 2024) or newer avatar
+                        const newRootNode = gltf.scene.getObjectByName("root_joint");
+                        const oldRootNode = gltf.scene.getObjectByName("Root_jnt");
+                        const isNewAvatar = !!newRootNode;
+
                         // Needed since all meshes are skinned
-                        const rootJoint = gltf.scene.children[0].children.filter(x => x.name === 'Root_jnt')[0];
-                        avatarNode.add(rootJoint);
+                        avatarNode.add(newRootNode ?? oldRootNode);
 
                         // Pick out a single child to use
-                        console.log(gltf.scene.children[0].children.map(x=>x.name));
-                        let child = gltf.scene.children[0].children.filter(x => x.name === 'S0_L0_M0_V1_optimized_geom')[0];
+                        let child = gltf.scene.getObjectByName(isNewAvatar ? 'LOD00_combined_geometry' : 'S0_L0_M0_V1_optimized_geom');
                         if(!child) {
                             // It seems that the highest lod level isn't present, attempt lowest one (might be a fastload avatar)
                             child = gltf.scene.children[0].children.filter(x => x.name === 'S0_L4_M0_V1_optimized_geom')[0];

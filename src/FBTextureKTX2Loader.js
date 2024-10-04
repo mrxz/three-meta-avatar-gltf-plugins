@@ -3,6 +3,7 @@ import {
     FileLoader,
     LinearFilter,
     LinearMipmapLinearFilter,
+    LinearSRGBColorSpace,
     Loader,
     RGBA_ASTC_6x6_Format,
     SRGBColorSpace,
@@ -12,7 +13,9 @@ import {
     read,
     KHR_SUPERCOMPRESSION_NONE,
     KHR_SUPERCOMPRESSION_ZSTD,
+    KHR_DF_TRANSFER_SRGB,
     VK_FORMAT_ASTC_6x6_SRGB_BLOCK,
+    VK_FORMAT_ASTC_6x6_UNORM_BLOCK,
 } from 'three/addons/libs/ktx-parse.module.js';
 import { ZSTDDecoder } from 'three/addons/libs/zstddec.module.js';
 
@@ -22,7 +25,8 @@ export class FBTextureKTX2Loader extends Loader {
      * Mapping and support matrix for vkFormat to WebGL format
      */
     static FORMAT_MAP = {
-        [ VK_FORMAT_ASTC_6x6_SRGB_BLOCK ]: RGBA_ASTC_6x6_Format
+        [ VK_FORMAT_ASTC_6x6_SRGB_BLOCK ]: RGBA_ASTC_6x6_Format,
+        [ VK_FORMAT_ASTC_6x6_UNORM_BLOCK ]: RGBA_ASTC_6x6_Format
     };
 
     load( url, onLoad, onProgress, onError ) {
@@ -103,7 +107,7 @@ export class FBTextureKTX2Loader extends Loader {
         texture.generateMipmaps = false;
 
         texture.needsUpdate = true;
-        texture.colorSpace = SRGBColorSpace;
+        texture.colorSpace = container.dataFormatDescriptor[0].transferFunction === KHR_DF_TRANSFER_SRGB ? SRGBColorSpace : LinearSRGBColorSpace;
         texture.premultiplyAlpha = false;
 
         return texture;
