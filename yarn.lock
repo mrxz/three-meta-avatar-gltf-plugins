@@ -74,7 +74,7 @@ __metadata:
     concurrently: "npm:^7.1.0"
     rollup: "npm:^2.71.1"
     rollup-plugin-terser: "npm:^7.0.2"
-    three: "npm:^0.150.1"
+    three: "npm:^0.169.0"
   languageName: unknown
   linkType: soft
 
@@ -1869,10 +1869,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:^0.150.1":
-  version: 0.150.1
-  resolution: "three@npm:0.150.1"
-  checksum: 10c0/c092c13a50db7076597c3596e326e797be14e2ec5479f03c543169539b579c55468d2a692afda108c3384636b42f432929616755017e78d3b99ce0f9dbf2d653
+"three@npm:^0.169.0":
+  version: 0.169.0
+  resolution: "three@npm:0.169.0"
+  checksum: 10c0/be2e20f45eaa50489cd22d366c41fa14528f00b873078f52fc6ef37140fa8e541e9805630bbe696ab9b027530c74e5cd341705266eb268b5219402fb9fa78ed4
   languageName: node
   linkType: hard
 

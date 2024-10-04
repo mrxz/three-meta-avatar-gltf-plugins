@@ -5,7 +5,7 @@ import {
     LinearMipmapLinearFilter,
     Loader,
     RGBA_ASTC_6x6_Format,
-    sRGBEncoding,
+    SRGBColorSpace,
     UnsignedByteType,
 } from 'three';
 import {
@@ -103,7 +103,7 @@ export class FBTextureKTX2Loader extends Loader {
         texture.generateMipmaps = false;
 
         texture.needsUpdate = true;
-        texture.encoding = sRGBEncoding;
+        texture.colorSpace = SRGBColorSpace;
         texture.premultiplyAlpha = false;
 
         return texture;
