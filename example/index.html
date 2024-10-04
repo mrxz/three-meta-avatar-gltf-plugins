@@ -44,7 +44,7 @@
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
-            const renderer = new THREE.WebGLRenderer();
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.outputEncoding = THREE.sRGBEncoding;
             renderer.toneMapping = THREE.ACESFilmicToneMapping;
             renderer.setPixelRatio(1.0);
@@ -115,8 +115,12 @@
             dirLight.position.set( 1, 4, 1 );
             scene.add(dirLight);
 
+            // GUI
+            let gui = null;
+
             // Container for the avatar
             const avatarNode = new THREE.Object3D();
+            let avatarMesh = null;
             scene.add(avatarNode);
 
             // Load avatar
@@ -137,27 +141,62 @@
                         const isNewAvatar = !!newRootNode;
 
                         // Needed since all meshes are skinned
-                        avatarNode.add(newRootNode ?? oldRootNode);
+                        avatarNode.add( newRootNode ?? oldRootNode );
+
+                        const avatarMeshes = Object.fromEntries(
+                            ( isNewAvatar ? gltf.scene.children : gltf.scene.children[0].children )
+                                .filter( x => x.isMesh )
+                                .map( x => [ x.name, x ] )
+                        );
 
                         // Pick out a single child to use
-                        let child = gltf.scene.getObjectByName(isNewAvatar ? 'LOD00_combined_geometry' : 'S0_L0_M0_V1_optimized_geom');
-                        if(!child) {
-                            // It seems that the highest lod level isn't present, attempt lowest one (might be a fastload avatar)
-                            child = gltf.scene.children[0].children.filter(x => x.name === 'S0_L4_M0_V1_optimized_geom')[0];
+                        changeMesh( Object.keys(avatarMeshes)[0] );
+
+                        // Add a GUI
+                        function createGui() {
+
+                            gui?.destroy();
+                            gui = new GUI();
+                            const settings = { mesh: avatarMesh.name }
+
+                            // Meshes
+                            gui.add( settings, 'mesh', avatarMeshes )
+                                .onChange( mesh => changeMesh( mesh.name ) );
+
+                            // Morph targets
+                            if ( avatarMesh.morphTargetDictionary ) {
+                                const morphTargetFolder = gui.addFolder('Morph Targets').close();
+                                const influences = avatarMesh.morphTargetInfluences;
+                                for ( const [ key, value ] of Object.entries( avatarMesh.morphTargetDictionary ) ) {
+
+                                    morphTargetFolder.add( influences, value, 0, 1, 0.01 )
+                                        .name( key )
+                                        .listen( influences );
+
+                                }
+                            }
+
                         }
-                        avatarNode.add(child);
 
-                        // Add a GUI to change the morph targets
-                        const gui = new GUI();
-                        if(child.morphTargetDictionary) {
-                            const influences = child.morphTargetInfluences;
-                            for ( const [ key, value ] of Object.entries( child.morphTargetDictionary ) ) {
+                        function changeMesh( meshName ) {
 
-                                gui.add( influences, value, 0, 1, 0.01 )
-                                    .name( key )
-                                    .listen( influences );
+                            if ( meshName === avatarMesh?.name ) {
+
+                                return;
 
                             }
+
+                            if ( avatarMesh ) {
+
+                                avatarNode.remove( avatarMesh );
+
+                            }
+
+                            avatarMesh = avatarMeshes[ meshName ];
+                            avatarNode.add( avatarMesh );
+
+                            createGui();
+
                         }
                     },
                     function(xhr) {},

@@ -28,24 +28,24 @@ export class FBMeshQuantization {
 
             const childGeometry = child.geometry;
             childGeometry.setAttribute('position',
-                this._dequantizeMeshPosition(childGeometry.getAttribute('position'), quantizationProperties));
+                this._dequantizeAttribute( childGeometry.getAttribute('position'), quantizationProperties['quantize_mesh_min_POSITION'], quantizationProperties['quantize_mesh_max_POSITION']));
             childGeometry.setAttribute('normal',
-                this._dequantizeMeshNormal(childGeometry.getAttribute('normal'), quantizationProperties));
+                this._dequantizeAttribute( childGeometry.getAttribute('normal'), quantizationProperties['quantize_min_NORMAL'], quantizationProperties['quantize_max_NORMAL'] ));
 
             // Dequantize any morph targets
             if('position' in childGeometry.morphAttributes) {
                 childGeometry.morphAttributes.position = childGeometry.morphAttributes.position.map(attribute =>
-                    this._dequantizeMorphTargetPosition( attribute, quantizationProperties ));
+                    this._dequantizeAttribute( attribute, quantizationProperties['quantize_min_POSITION'], quantizationProperties['quantize_max_POSITION'] ));
             }
 
         });
 
     }
 
-    _dequantizeMeshPosition( attribute, quantizationProperties ) {
+    _dequantizeAttribute( attribute, minValues, maxValues ) {
 
-        const min = new THREE.Vector3(...quantizationProperties['quantize_mesh_min_POSITION']);
-        const max = new THREE.Vector3(...quantizationProperties['quantize_mesh_max_POSITION']);
+        const min = new THREE.Vector3(...minValues);
+        const max = new THREE.Vector3(...maxValues);
         const dimensions = new THREE.Vector3().copy(max).sub(min);
 
         const newAttribute = new THREE.BufferAttribute(new Float32Array(attribute.count * 3), 3, false);
@@ -57,48 +57,6 @@ export class FBMeshQuantization {
                 min.x+((vec3.x+1.0)*dimensions.x*.5),
                 min.y+((vec3.y+1.0)*dimensions.y*.5),
                 min.z+((vec3.z+1.0)*dimensions.z*.5));
-        }
-
-        return newAttribute;
-
-    }
-
-    _dequantizeMeshNormal( attribute, quantizationProperties ) {
-
-        const min = new THREE.Vector3(...quantizationProperties['quantize_min_NORMAL']);
-        const max = new THREE.Vector3(...quantizationProperties['quantize_max_NORMAL']);
-        const dimensions = new THREE.Vector3().copy(max).sub(min);
-
-        const newAttribute = new THREE.BufferAttribute(new Float32Array(attribute.count * 3), 3, false);
-
-        const vec3 = new THREE.Vector3();
-        for(let i = 0; i < attribute.count; i++) {
-            vec3.fromBufferAttribute(attribute, i);
-            newAttribute.setXYZ(i,
-                min.x+((vec3.x+1.0)*dimensions.x*.5),
-                min.y+((vec3.y+1.0)*dimensions.y*.5),
-                min.z+((vec3.z+1.0)*dimensions.z*.5));
-        }
-
-        return newAttribute;
-
-    }
-
-    _dequantizeMorphTargetPosition( attribute, quantizationProperties ) {
-
-        const min = new THREE.Vector3(...quantizationProperties['quantize_min_POSITION']);
-        const max = new THREE.Vector3(...quantizationProperties['quantize_max_POSITION']);
-        const dimensions = new THREE.Vector3().copy(max).sub(min);
-
-        const newAttribute = new THREE.BufferAttribute(new Float32Array(attribute.count * 3), 3, false);
-
-        const vec3 = new THREE.Vector3();
-        for(let i = 0; i < attribute.count; i++) {
-            vec3.fromBufferAttribute(attribute, i);
-            newAttribute.setXYZ(i,
-                min.x+dimensions.x/2.0-(vec3.x*dimensions.x*.25),
-                min.y+dimensions.y/2.0-(vec3.y*dimensions.y*.25),
-                min.z+dimensions.z/2.0-(vec3.z*dimensions.z*.25));
         }
 
         return newAttribute;
