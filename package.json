@@ -1,6 +1,6 @@
 {
   "name": "@fern-solutions/three-meta-avatar-gltf-plugins",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "GLTFLoader plugins for loading Meta Avatars in Three.js projects",
   "module": "dist/three-meta-avatar-gltf-plugins.esm.min.js",
   "browser": "dist/three-meta-avatar-gltf-plugins.umd.min.js",
