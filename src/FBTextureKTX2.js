@@ -1,4 +1,5 @@
 import { FBTextureKTX2Loader } from './FBTextureKTX2Loader.js';
+import { NearestFilter, LinearFilter } from 'three';
 
 export class FBTextureKTX2 {
 
@@ -32,8 +33,22 @@ export class FBTextureKTX2 {
 
         }
 
-        return parser.loadTextureImage( textureIndex, extension.source, this.loader );
+        return parser.loadTextureImage( textureIndex, extension.source, this.loader )
+            .then( fixMagFilter );
 
     }
+
+}
+
+// The v29 avatars seem to set the TEXTURE_MAG_FILTER to LINEAR_MIPMAP_LINEAR which is a min filter, not a mag filter.
+function fixMagFilter ( texture ) {
+
+    if ( texture.magFilter !== NearestFilter && texture.magFilter !== LinearFilter ) {
+
+        texture.magFilter = LinearFilter;
+
+    }
+
+    return texture;
 
 }
