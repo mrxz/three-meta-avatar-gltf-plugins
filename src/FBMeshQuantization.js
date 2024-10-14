@@ -10,7 +10,7 @@ export class FBMeshQuantization {
 
     afterRoot( gltf ) {
 
-        const quantizationProperties = gltf.parser.json.extensions['FB_mesh_quantization'];
+        const quantizationProperties = gltf.parser.json.extensions?.['FB_mesh_quantization'];
         if ( !quantizationProperties ) {
 
             // Model doesn't use FB_mesh_quantization
